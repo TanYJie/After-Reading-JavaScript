@@ -1,11 +1,15 @@
 # 第二章-在HTML中使用JavaScript
->本章主要介绍了如何在HTML中使用JavaScipt创建动态网页。
-### 1.1 JavaScript简史
-　　JavaScript诞生于1995年，当时它的主要目的是处理表单数据。Netscape公司首先为自己的浏览器开发了一款名为LiveScript的脚本语言（后为搭上媒体热炒Java的顺风车，改名为JavaScript）。同时微软公司为了竞争，也在Internet Explorer中加入名为JScript的JavaScript实现（避开版权问题）。市面上出现了两个不同的JavaScript版本，由于没有标准规定JavaScript的语法和特性，所以JavaScript的标准化被提上了仪事日程。  
-　　欧洲计算机制造商协会（ECMA）经过数月的努力完成了ECMA-262——定义一种名为ECMAScript（发音为“ek-ma-script”）的新脚本语言的标准。
-### 1.2 JavaScript实现
-　　虽然JavaScript和ECMAScript通常被人们用来表达相同的含义，但是JavaScript的含义却比ECMA-262中规定的要多得多。一个完整的JavaScript实现应该由以下三个不同的部分组成。
-  <div style="align:center;width:100%"><img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1549607563801&di=0f5b05c1c5b1bac7ef5b50d4431b55e8&imgtype=0&src=http%3A%2F%2Fimage.bubuko.com%2Finfo%2F201901%2F20190121215922722425.png"/></div>
+>本章内容  
+>  * <script>元素的属性
+>  * 嵌入脚本和外部脚本
+>  * 延迟脚本和异步脚本
+>  * 考虑禁用JavaScript的场景
+
+### 2.1 <script>元素
+　　向HTML页面中插入JavaScript的主要方法，就是使用<script>元素，<script>元素由下列6个属性。
+  * `src`：可选。表示包含要执行代码的外部文件  
+  * `type`：可选。表示编写代码使用的脚本语言的内容类型（也称MIME类型）。默认值为`text/javascript`。考虑约定俗成和最大限度的兼容性，目前type属性的值依旧还是`text/javascript`。
+
   
 #### 1.2.1 ECMAScript  
 　　由ECMA-262定义的ECMAScript与Web浏览器没有任何关系，ECMA-262定义的只是这门语言的基础。Web浏览器只是ECMAScript实现可能的`宿主环境`之一。宿主环境不仅提供基本的ECMAScript实现，同时也会提供该语言的扩展（如DOM）。也就是说JavaScript实现了ECMAScript。
