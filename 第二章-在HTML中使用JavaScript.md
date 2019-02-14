@@ -8,41 +8,91 @@
 ### 2.1 <script>元素
 　　向HTML页面中插入JavaScript的主要方法，就是使用<script>元素，<script>元素由下列6个属性。
   * `src`：可选。表示包含要执行代码的外部文件  
-  * `type`：可选。表示编写代码使用的脚本语言的内容类型（也称MIME类型）。默认值为`text/javascript`。考虑约定俗成和最大限度的兼容性，目前type属性的值依旧还是`text/javascript`。
-
+  * `charset`：可选。表示通过src属性指定的代码的字符集。
+  * `language`：已废弃。原来用于表示编写代码使用的脚本语言（JavaScript、VBScript等）。
+  * `type`：可选。可以看成language的替代属性。表示编写代码使用的脚本语言的内容类型（也称MIME类型）。默认值为`text/javascript`。考虑约定俗成和最大限度的兼容性，目前type属性的值依旧还是`text/javascript`。  
+  * `async`：可选。表示应该立即下载该脚本，只对外部脚本文件有效。  
+  * `defer`：可选。表示脚本可以延迟到文档被完全解析和显示之后再执行，只对外部脚本文件有效。  
+ 
+### 2.2 标签的位置  
+　　传统的做法中，所有<script>元素都放在页面的<head>元素中，例如：
+```html
+ <!DOCTYPE html>
+ <html>
+   <head>
+     <title>This is title</title>
+     <script type="text/javascript" src="example1.js"></script>
+     <script type="text/javascript" src="example2.js"></script>
+   </head> 
+   <body>
+     <!--这里放内容-->
+   </body>
+ </html>
+```
+　　这种做法意味着必须等到全部JavaScript代码都被下载、解析和执行完成后，才能开始呈现页面的内容。如果某些页面JavaScript代码很多，那么就会出现界面显示的延迟。为了避免这个问题，现在Web应用程序一般**把JavaScript引用放在<body>元素中页面内容的后面**。如下：
+```html
+ <!DOCTYPE html>
+ <html>
+   <head>
+     <title>This is title</title>
+   </head> 
+   <body>
+     <!--这里放内容-->
+     <script type="text/javascript" src="example1.js"></script>
+     <script type="text/javascript" src="example2.js"></script>
+   </body>
+ </html>
+```
   
-#### 1.2.1 ECMAScript  
-　　由ECMA-262定义的ECMAScript与Web浏览器没有任何关系，ECMA-262定义的只是这门语言的基础。Web浏览器只是ECMAScript实现可能的`宿主环境`之一。宿主环境不仅提供基本的ECMAScript实现，同时也会提供该语言的扩展（如DOM）。也就是说JavaScript实现了ECMAScript。
+### 2.3 延迟脚本  
+　　这个属性的用途是表明脚本在执行时不会影响页面的构造。也就是说，脚本会被延迟到整个页面都解析完毕后再运行。
+```html
+ <!DOCTYPE html>
+ <html>
+   <head>
+     <title>This is title</title>
+     <script type="text/javascript" defer="defer" src="example1.js"></script>
+     <script type="text/javascript" defer="defer" src="example2.js"></script>
+   </head> 
+   <body>
+     <!--这里放内容-->
+   </body>
+ </html>
+```
+　　这个例子中，虽然把<script>元素放在<head>元素中，但这两个脚本会延迟到浏览器遇到</html>标签后才执行。HTML5规范要求脚本按照它们出现的先后顺序执行。但在现实中，延迟脚本不一定按照顺序执行(?)。**因此最好只包含一个延迟脚本。**
+　　IE4、FireFox 3.5、Safari 5、Chrome是最早支持defer属性的浏览器。其他浏览器会忽略这个属性，向平常一样处理脚本。为此，**把延迟脚本放在页面底部仍然是最佳选择。** 
   
-　　ECMA-262规定了这门语言的：
-  * 语法
-  * 类型
-  * 语句
-  * 关键字
-  * 保留字
-  * 操作符
-  * 对象  
+### 2.4 异步脚本  
+　　制定async属性的目的是不让页面等待两个脚本下载和执行，从而异步加载页面其他内容。为此，**建议异步脚本不要在加载期间修改DOM。**
+```html
+ <!DOCTYPE html>
+ <html>
+   <head>
+     <title>This is title</title>
+     <script type="text/javascript" async="async" src="example1.js"></script>
+     <script type="text/javascript" async="async" src="example2.js"></script>
+   </head> 
+   <body>
+     <!--这里放内容-->
+   </body>
+ </html>
+```
+　　以上代码中，两个脚本文件的执行顺序是不确定的，因此要确保两者不相互依赖。这个属性的用途是表明脚本在执行时不会影响页面的构造。也就是说，脚本会被延迟到整个页面都解析完毕后再运行。异步脚本一定会在页面的load事件前执行。
   
-#### 1.2.2 文档对象模型（DOM） 
-　　文档对象模型是针对XML但经过扩展用于HTML的应用程序编程接口（API）。DOM把整个页面映射为一个多层节点结构。借助DOM提供的API，开发人员可以轻松自如地删除、添加、替换或修改任何节点。<br>
-　　`DOM并不只是针对JavaScript的，很多别的语言也实现了DOM。不过，在Web浏览器中，基于ECMAScript实现的DOM的确成为JavaScript这门语言的一个重要组成部分。`  
-  
-1. DOM1级  
-  由DOM核心和DOM HTML组成，DOM核心规定了如何映射基于XML的文档结构，DOM HTML模块在DOM核心的基础上扩展，增加了对HTML的对象和方法。  
-2. DOM2级  
-  引入了下列新模块，也给出了众多新类型和新接口的定义。  
-  * `DOM视图`：定义了跟踪不同文档视图的接口。
-  * `DOM事件`：定义了事件和处理事件的接口。
-  * `DOM样式`：定义了基于CSS为元素应用样式的接口。
-  * `DOM遍历和范围`：定义了遍历和操作文档树的接口。
-3. DOM3级  
-  DOM3级进一步扩展了DOM，引入了以统一方式加载和保存文档的方法（DOM加载和保存模块）；新增了验证文档的方法（DOM验证模块）。
-#### 1.2.3 浏览器对象模型（BOM）  
-  HTML5中，很多BOM功能写入了正式规范。从根本上讲，BOM只处理浏览器窗口和框架，比如：
-  * 弹出新浏览器窗口的功能；
-  * 移动、缩放、关闭浏览器窗口的功能；
-  * 提供浏览器详细信息的navigator对象；
-  * 提供浏览器所加载页面的详细信息的location对象；
-  * 提供用户显示器分辨率详细信息的screen对象；
-  * 对cookie的支持
-  * 像XMLHttpRequest和IE的ActiveXObject这样的自定义对象
+### 2.5 \<noscript\>元素  
+　　使用<noscript>元素对付不支持JavaScript的浏览器，例如：
+```html
+ <!DOCTYPE html>
+ <html>
+   <head>
+     <title>This is title</title>
+     <script type="text/javascript" defer="defer" src="example1.js"></script>
+     <script type="text/javascript" defer="defer" src="example2.js"></script>
+   </head> 
+   <body>
+     <noscript>
+       <p>本页面需要浏览器支持JavaScript</p>
+     </noscript>
+   </body>
+ </html>
+```
